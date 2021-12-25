@@ -1,12 +1,10 @@
 using AspNetCoreHero.Boilerplate.Application.Extensions;
-using AspNetCoreHero.Boilerplate.Infrastructure.Extensions;
 using AspNetCoreHero.Boilerplate.Web.Abstractions;
 using AspNetCoreHero.Boilerplate.Web.Extensions;
 using AspNetCoreHero.Boilerplate.Web.Permission;
 using AspNetCoreHero.Boilerplate.Web.Services;
 using AspNetCoreHero.ToastNotification;
 using AspNetCoreHero.ToastNotification.Extensions;
-using AutoMapper;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -43,7 +41,7 @@ public class Startup
         services.AddApplicationLayer();
         services.AddSharedInfrastructure(Configuration);
         services.AddInfrastructure(Configuration);
-        services.AddPersistenceContexts(Configuration);
+        //services.AddPersistenceContexts(Configuration);
         //services.AddRepositories();
         services.AddMultiLingualSupport();
         services.AddControllersWithViews().AddFluentValidation(fv =>

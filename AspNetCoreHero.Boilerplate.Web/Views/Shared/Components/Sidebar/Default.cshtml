@@ -20,7 +20,7 @@
                 </li>
                 @if (User.IsInRole("SuperAdmin"))
                 {
-                    <li class="nav-header">@localizer["Admin"]</li>
+                    @*<li class="nav-header">@localizer["Admin"]</li>
                     <li is-active-route asp-area="Admin" class="nav-item has-treeview">
                         <a is-active-route asp-area="Admin" class="nav-link">
                             <i class="nav-icon fas fa-user"></i>
@@ -43,7 +43,7 @@
                                 </a>
                             </li>
                         </ul>
-                    </li>
+                    </li>*@
                 }
                 <li class="nav-header">@localizer["Master"]</li>
                 <li is-active-route asp-area="Utilities" class="nav-item has-treeview">

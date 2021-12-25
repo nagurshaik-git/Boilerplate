@@ -1,6 +1,5 @@
-﻿namespace AspNetCoreHero.Boilerplate.Application
+﻿namespace AspNetCoreHero.Boilerplate.Application;
+
+public interface IApplicationLayer
 {
-    public interface IApplicationLayer
-    {
-    }
 }

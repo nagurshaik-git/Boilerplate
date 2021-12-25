@@ -2,12 +2,11 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace AspNetCoreHero.Boilerplate.Application.Interfaces.Repositories
-{
-    public interface IUnitOfWork : IDisposable
-    {
-        Task<int> Commit(CancellationToken cancellationToken);
+namespace AspNetCoreHero.Boilerplate.Application.Interfaces.Repositories;
 
-        Task Rollback();
-    }
+public interface IUnitOfWork : IDisposable
+{
+    Task<int> Commit(CancellationToken cancellationToken);
+
+    Task Rollback();
 }

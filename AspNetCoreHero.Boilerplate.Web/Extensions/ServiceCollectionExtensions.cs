@@ -1,8 +1,5 @@
 ﻿using AspNetCoreHero.Boilerplate.Application.DTOs.Settings;
 using AspNetCoreHero.Boilerplate.Application.Interfaces.Shared;
-using AspNetCoreHero.Boilerplate.Infrastructure.DbContexts;
-using AspNetCoreHero.Boilerplate.Infrastructure.Identity.Models;
-using AspNetCoreHero.Boilerplate.Infrastructure.Shared.Services;
 using AspNetCoreHero.Boilerplate.Web.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -146,34 +143,32 @@ public static class ServiceCollectionExtensions
         return Task.CompletedTask;
     }
 
-    private static void AddPersistenceContexts(this IServiceCollection services, IConfiguration configuration)
-    {
-        if (configuration.GetValue<bool>("UseInMemoryDatabase"))
-        {
-            services.AddDbContext<IdentityContext>(options =>
-                options.UseInMemoryDatabase("IdentityDb"));
-            services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseInMemoryDatabase("ApplicationDb"));
-        }
-        else
-        {
-            services.AddDbContext<IdentityContext>(options => options.UseSqlServer(configuration.GetConnectionString("IdentityConnection")));
-            services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(configuration.GetConnectionString("ApplicationConnection")));
-        }
-        services.AddIdentity<ApplicationUser, IdentityRole>(options =>
-        {
-            options.SignIn.RequireConfirmedAccount = true;
-            options.Password.RequireNonAlphanumeric = false;
-        }).AddEntityFrameworkStores<IdentityContext>().AddDefaultUI().AddDefaultTokenProviders();
-    }
+    //private static void AddPersistenceContexts(this IServiceCollection services, IConfiguration configuration)
+    //{
+    //    if (configuration.GetValue<bool>("UseInMemoryDatabase"))
+    //    {
+    //        services.AddDbContext<IdentityContext>(options =>
+    //            options.UseInMemoryDatabase("IdentityDb"));
+    //        services.AddDbContext<ApplicationDbContext>(options =>
+    //            options.UseInMemoryDatabase("ApplicationDb"));
+    //    }
+    //    else
+    //    {
+    //        services.AddDbContext<IdentityContext>(options => options.UseSqlServer(configuration.GetConnectionString("IdentityConnection")));
+    //        services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(configuration.GetConnectionString("ApplicationConnection")));
+    //    }
+    //    services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+    //    {
+    //        options.SignIn.RequireConfirmedAccount = true;
+    //        options.Password.RequireNonAlphanumeric = false;
+    //    }).AddEntityFrameworkStores<IdentityContext>().AddDefaultUI().AddDefaultTokenProviders();
+    //}
 
     public static void AddSharedInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
         services.Configure<IdentityClientSettings>(configuration.GetSection(nameof(IdentityClientSettings)));
         services.Configure<MailSettings>(configuration.GetSection(nameof(MailSettings)));
         services.Configure<CacheSettings>(configuration.GetSection(nameof(CacheSettings)));
-        services.AddTransient<IDateTimeService, SystemDateTimeService>();
-        services.AddTransient<IMailService, SMTPMailService>();
         services.AddTransient<IAuthenticatedUserService, AuthenticatedUserService>();
     }
 }

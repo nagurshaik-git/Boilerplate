@@ -1,7 +1,6 @@
-﻿namespace AspNetCoreHero.Boilerplate.Application.Constants
+﻿namespace AspNetCoreHero.Boilerplate.Application.Constants;
+
+public class CustomClaimTypes
 {
-    public class CustomClaimTypes
-    {
-        public const string Permission = "Permission";
-    }
+    public const string Permission = "Permission";
 }

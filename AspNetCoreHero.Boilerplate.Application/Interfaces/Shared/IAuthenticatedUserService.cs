@@ -1,8 +1,7 @@
-﻿namespace AspNetCoreHero.Boilerplate.Application.Interfaces.Shared
+﻿namespace AspNetCoreHero.Boilerplate.Application.Interfaces.Shared;
+
+public interface IAuthenticatedUserService
 {
-    public interface IAuthenticatedUserService
-    {
-        string UserId { get; }
-        public string Username { get; }
-    }
+    string UserId { get; }
+    public string Username { get; }
 }

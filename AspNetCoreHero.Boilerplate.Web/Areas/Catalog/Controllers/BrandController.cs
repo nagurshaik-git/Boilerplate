@@ -1,9 +1,4 @@
-﻿using AspNetCoreHero.Boilerplate.Application.Features.Brands.Commands.Create;
-using AspNetCoreHero.Boilerplate.Application.Features.Brands.Commands.Delete;
-using AspNetCoreHero.Boilerplate.Application.Features.Brands.Commands.Update;
-using AspNetCoreHero.Boilerplate.Application.Features.Brands.Queries.GetAllCached;
-using AspNetCoreHero.Boilerplate.Application.Features.Brands.Queries.GetById;
-using AspNetCoreHero.Boilerplate.Web.Abstractions;
+﻿using AspNetCoreHero.Boilerplate.Web.Abstractions;
 using AspNetCoreHero.Boilerplate.Web.Areas.Catalog.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;

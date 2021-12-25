@@ -7,6 +7,14 @@
     <PackageReference Include="AspNetCoreHero.Results" Version="1.1.1" />
     <PackageReference Include="AutoMapper" Version="10.1.1" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
+    <PackageReference Include="Microsoft.Extensions.ApiDescription.Client" Version="3.0.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="NSwag.ApiDescription.Client" Version="13.0.5">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="System.Linq.Dynamic.Core" Version="1.2.15" />
     <PackageReference Include="AspNetCoreHero.ThrowR" Version="1.0.0" />
     <PackageReference Include="FluentValidation" Version="10.3.6" />
@@ -19,6 +27,6 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\AspNetCoreHero.Boilerplate.Domain\AspNetCoreHero.Boilerplate.Domain.csproj" />
+    <Folder Include="Enums\" />
   </ItemGroup>
 </Project>

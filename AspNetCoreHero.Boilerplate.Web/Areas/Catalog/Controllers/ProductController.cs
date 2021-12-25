@@ -1,10 +1,4 @@
 ﻿using AspNetCoreHero.Boilerplate.Application.Constants;
-using AspNetCoreHero.Boilerplate.Application.Features.Brands.Queries.GetAllCached;
-using AspNetCoreHero.Boilerplate.Application.Features.Products.Commands.Create;
-using AspNetCoreHero.Boilerplate.Application.Features.Products.Commands.Delete;
-using AspNetCoreHero.Boilerplate.Application.Features.Products.Commands.Update;
-using AspNetCoreHero.Boilerplate.Application.Features.Products.Queries.GetAllCached;
-using AspNetCoreHero.Boilerplate.Application.Features.Products.Queries.GetById;
 using AspNetCoreHero.Boilerplate.Web.Abstractions;
 using AspNetCoreHero.Boilerplate.Web.Areas.Catalog.Models;
 using AspNetCoreHero.Boilerplate.Web.Extensions;
@@ -35,7 +29,7 @@ public class ProductController : BaseController<ProductController>
         //    var viewModel = _mapper.Map<List<ProductViewModel>>(response.Data);
             
         //}
-        return PartialView("_ViewAll");
+        return PartialView("_ViewAll", new List<ProductViewModel>());
     }
 
     [Authorize(Policy = Permissions.Users.View)]

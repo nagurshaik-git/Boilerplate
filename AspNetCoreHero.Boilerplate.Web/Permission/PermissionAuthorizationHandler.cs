@@ -1,5 +1,4 @@
 ﻿using AspNetCoreHero.Boilerplate.Application.Constants;
-using AspNetCoreHero.Boilerplate.Infrastructure.Identity.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using System.Linq;
