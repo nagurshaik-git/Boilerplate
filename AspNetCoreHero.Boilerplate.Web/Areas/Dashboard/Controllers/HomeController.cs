@@ -8,7 +8,7 @@ public class HomeController : BaseController<HomeController>
 {
     public IActionResult Index()
     {
-        _notify.Information("Hi There!");
+        _notify.Information("Welcome to 6Storage inventory!");
         return View();
     }
 }

@@ -22,7 +22,7 @@ public static class FormFileExtensions
                 //}
                 if (image.Height > maxHeight)
                 {
-                    var thumbScaleFactor = maxHeight / image.Height;
+                    int thumbScaleFactor = maxHeight / image.Height;
                     image.Mutate(i => i.Resize(maxHeight, image.Width *
                         thumbScaleFactor));
                 }
