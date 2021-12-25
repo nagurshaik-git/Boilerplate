@@ -4,31 +4,30 @@ using MediatR;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace AspNetCoreHero.Boilerplate.Application.Features.ActivityLog.Commands.AddLog
+namespace AspNetCoreHero.Boilerplate.Application.Features.Logs.Commands.AddActivityLog;
+
+public partial class AddActivityLogCommand : IRequest<Result<int>>
 {
-    public partial class AddActivityLogCommand : IRequest<Result<int>>
+    public string Action { get; set; }
+    public string UserId { get; set; }
+}
+
+public class AddActivityLogCommandHandler : IRequestHandler<AddActivityLogCommand, Result<int>>
+{
+    private readonly ILogRepository _repo;
+
+    private IUnitOfWork UnitOfWork { get; set; }
+
+    public AddActivityLogCommandHandler(ILogRepository repo, IUnitOfWork unitOfWork)
     {
-        public string Action { get; set; }
-        public string userId { get; set; }
+        _repo = repo;
+        UnitOfWork = unitOfWork;
     }
 
-    public class AddActivityLogCommandHandler : IRequestHandler<AddActivityLogCommand, Result<int>>
+    public async Task<Result<int>> Handle(AddActivityLogCommand request, CancellationToken cancellationToken)
     {
-        private readonly ILogRepository _repo;
-
-        private IUnitOfWork _unitOfWork { get; set; }
-
-        public AddActivityLogCommandHandler(ILogRepository repo, IUnitOfWork unitOfWork)
-        {
-            _repo = repo;
-            _unitOfWork = unitOfWork;
-        }
-
-        public async Task<Result<int>> Handle(AddActivityLogCommand request, CancellationToken cancellationToken)
-        {
-            await _repo.AddLogAsync(request.Action, request.userId);
-            await _unitOfWork.Commit(cancellationToken);
-            return Result<int>.Success(1);
-        }
+        await _repo.AddLogAsync(request.Action, request.UserId);
+        await UnitOfWork.Commit(cancellationToken);
+        return Result<int>.Success(1);
     }
 }

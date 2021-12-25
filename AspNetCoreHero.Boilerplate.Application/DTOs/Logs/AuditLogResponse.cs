@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace AspNetCoreHero.Boilerplate.Application.DTOs
+namespace AspNetCoreHero.Boilerplate.Application.DTOs.Logs
 {
     public class AuditLogResponse
     {

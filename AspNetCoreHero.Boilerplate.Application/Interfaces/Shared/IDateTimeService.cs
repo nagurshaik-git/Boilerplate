@@ -1,9 +1,8 @@
 ﻿using System;
 
-namespace AspNetCoreHero.Boilerplate.Application.Interfaces.Shared
+namespace AspNetCoreHero.Boilerplate.Application.Interfaces.Shared;
+
+public interface IDateTimeService
 {
-    public interface IDateTimeService
-    {
-        DateTime NowUtc { get; }
-    }
+    DateTime NowUtc { get; }
 }

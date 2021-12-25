@@ -1,12 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace AspNetCoreHero.Boilerplate.Web.Views.Shared.Components.Header
+namespace AspNetCoreHero.Boilerplate.Web.Views.Shared.Components.Header;
+
+public class HeaderViewComponent : ViewComponent
 {
-    public class HeaderViewComponent : ViewComponent
+    public IViewComponentResult Invoke()
     {
-        public IViewComponentResult Invoke()
-        {
-            return View();
-        }
+        return View();
     }
 }

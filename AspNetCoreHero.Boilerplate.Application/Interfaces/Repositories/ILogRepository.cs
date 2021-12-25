@@ -1,4 +1,4 @@
-﻿using AspNetCoreHero.Boilerplate.Application.DTOs;
+﻿using AspNetCoreHero.Boilerplate.Application.DTOs.Logs;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 

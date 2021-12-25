@@ -1,14 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\AspNetCoreHero.Boilerplate.Application\AspNetCoreHero.Boilerplate.Application.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="MailKit" Version="2.10.0" />
-    <PackageReference Include="MimeKit" Version="2.10.1" />
+    <PackageReference Include="MailKit" Version="3.0.0" />
+    <PackageReference Include="MimeKit" Version="3.0.0" />
   </ItemGroup>
 </Project>

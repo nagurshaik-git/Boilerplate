@@ -1,4 +1,4 @@
-﻿using AspNetCoreHero.Boilerplate.Application.DTOs;
+﻿using AspNetCoreHero.Boilerplate.Application.DTOs.Logs;
 using AspNetCoreHero.Boilerplate.Application.Interfaces.Repositories;
 using AspNetCoreHero.Boilerplate.Application.Interfaces.Shared;
 using AspNetCoreHero.EntityFrameworkCore.AuditTrail.Models;
