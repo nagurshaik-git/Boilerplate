@@ -5,7 +5,7 @@ VisualStudioVersion = 17.0.31919.166
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspNetCoreHero.Boilerplate.Web", "AspNetCoreHero.Boilerplate.Web\AspNetCoreHero.Boilerplate.Web.csproj", "{13F3C442-3D44-40AF-9E0F-99DC35A26F45}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Source", "Source", "{267D29E0-F443-4639-B978-2C558F631685}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{267D29E0-F443-4639-B978-2C558F631685}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{544A568D-F871-4182-9825-CEFB86A3F81F}"
 EndProject

@@ -1,3 +1,4 @@
+using AspNetCoreHero.Boilerplate.Application.Common;
 using AspNetCoreHero.Boilerplate.Application.Extensions;
 using AspNetCoreHero.Boilerplate.Web.Abstractions;
 using AspNetCoreHero.Boilerplate.Web.Extensions;
@@ -30,29 +31,29 @@ public class Startup
 
     public void ConfigureServices(IServiceCollection services)
     {
-        services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
-        services.AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler>();
         services.AddNotyf(o =>
         {
             o.DurationInSeconds = 10;
             o.IsDismissable = true;
             o.HasRippleEffect = true;
         });
-        services.AddApplicationLayer();
-        services.AddSharedInfrastructure(Configuration);
-        services.AddInfrastructure(Configuration);
-        //services.AddPersistenceContexts(Configuration);
-        //services.AddRepositories();
-        services.AddMultiLingualSupport();
-        services.AddControllersWithViews().AddFluentValidation(fv =>
-        {
-            fv.RegisterValidatorsFromAssembly(Assembly.GetExecutingAssembly());
-        });
-        services.AddAutoMapper(Assembly.GetExecutingAssembly());
-        services.AddDistributedMemoryCache();
+
+        services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>()
+            .AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler>()
+            .AddSharedInfrastructure(Configuration)
+            .AddInfrastructure(Configuration)
+            .AddApplicationLayer(Configuration)
+            .AddMultiLingualSupport()
+            .AddDistributedMemoryCache()
+            .AddTransient<IActionContextAccessor, ActionContextAccessor>()
+            .AddScoped<IViewRenderService, ViewRenderService>()
+            .AddControllersWithViews()
+            .AddFluentValidation(fv =>
+            {
+                fv.RegisterValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+            });
         services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-        services.AddTransient<IActionContextAccessor, ActionContextAccessor>();
-        services.AddScoped<IViewRenderService, ViewRenderService>();
+        services.AutoRegisterInterfaces<IApiService>();
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

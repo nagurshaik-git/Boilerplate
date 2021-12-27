@@ -1,5 +1,4 @@
-﻿@using AspNetCoreHero.Boilerplate.Web.Areas.Catalog.Models
-@model IEnumerable<ProductViewModel>
+﻿@model IEnumerable<ProductDto>
 <table id="productTable" class="table table-striped" width="100%" cellspacing="0">
     <thead>
         <tr>
@@ -26,9 +25,9 @@
                 <td>
                     @product.Name
                 </td>
-                <td>
+                @*<td>
                     @product.Barcode
-                </td>
+                </td>*@
                 <td>
                     @product.Description
                 </td>

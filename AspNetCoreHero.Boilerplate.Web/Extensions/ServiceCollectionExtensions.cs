@@ -1,17 +1,20 @@
-﻿using AspNetCoreHero.Boilerplate.Application.DTOs.Settings;
+﻿using AspNetCoreHero.Boilerplate.Application.Abstractions;
+using AspNetCoreHero.Boilerplate.Application.ApiService;
+using AspNetCoreHero.Boilerplate.Application.Common;
+using AspNetCoreHero.Boilerplate.Application.Constants;
+using AspNetCoreHero.Boilerplate.Application.DTOs.Settings;
+using AspNetCoreHero.Boilerplate.Application.Extensions;
 using AspNetCoreHero.Boilerplate.Application.Interfaces.Shared;
 using AspNetCoreHero.Boilerplate.Web.Services;
+using IdentityModel.Client;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc.Authorization;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using Polly;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -22,7 +25,7 @@ namespace AspNetCoreHero.Boilerplate.Web.Extensions;
 
 public static class ServiceCollectionExtensions
 {
-    public static void AddMultiLingualSupport(this IServiceCollection services)
+    public static IServiceCollection AddMultiLingualSupport(this IServiceCollection services)
     {
         #region Registering ResourcesPath
 
@@ -52,24 +55,21 @@ public static class ServiceCollectionExtensions
             options.SupportedCultures = cultures;
             options.SupportedUICultures = cultures;
         });
+        return services;
     }
 
-    public static void AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddRouting(options => options.LowercaseUrls = true);
-        //services.AddPersistenceContexts(configuration);
-        services.AddAuthenticationScheme(configuration);
+        services.AddRouting(options => options.LowercaseUrls = true)
+            .AddAuthenticationScheme(configuration);
+        return services;
     }
 
-    private static void AddAuthenticationScheme(this IServiceCollection services, IConfiguration configuration)
+    private static IServiceCollection AddAuthenticationScheme(this IServiceCollection services, IConfiguration configuration)
     {
         JwtSecurityTokenHandler.DefaultMapInboundClaims = false;
 
         var identityClientSettings = configuration.GetSection(nameof(IdentityClientSettings)).Get<IdentityClientSettings>();
-
-        //services
-        //        .AddIdentity<ApplicationUser, Applicationr>()
-        //        .AddDefaultTokenProviders();
 
         services.AddAuthentication(options =>
         {
@@ -93,6 +93,7 @@ public static class ServiceCollectionExtensions
                 options.ClientId = identityClientSettings.ClientId;
                 options.ClientSecret = identityClientSettings.ClientSecret;
                 options.ResponseType = identityClientSettings.OidcResponseType;
+                options.UsePkce = true;
 
                 options.Scope.Clear();
                 foreach (string scope in identityClientSettings.Scopes)
@@ -118,11 +119,38 @@ public static class ServiceCollectionExtensions
                     OnRedirectToIdentityProvider = context => OnRedirectToIdentityProvider(context, identityClientSettings)
                 };
             });
-        services.AddMvc(o =>
+
+        // adds user and client access token management
+        services.AddAccessTokenManagement(options =>
         {
-            var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
-            o.Filters.Add(new AuthorizeFilter(policy));
+            // client config is inferred from OpenID Connect settings
+            // if you want to specify scopes explicitly, do it here, otherwise the scope parameter will not be sent
+            //options.Client = "api";
+            options.Client.DefaultClient.Scope = "inventory_management_api";
+            options.Client.Clients.Add("identityserver", new ClientCredentialsTokenRequest
+            {
+                Address = $"{identityClientSettings.IdentityServerBaseUrl}/connect/token",
+                ClientId = identityClientSettings.ClientId,
+                ClientSecret = identityClientSettings.ClientSecret,
+            });
+        })
+            .ConfigureBackchannelHttpClient()
+                .AddTransientHttpErrorPolicy(policy => policy.WaitAndRetryAsync(new[]
+                {
+                    TimeSpan.FromSeconds(1),
+                    TimeSpan.FromSeconds(2),
+                    TimeSpan.FromSeconds(3)
+                }));
+
+        // registers HTTP client that uses the managed user access token
+        services.AddUserAccessTokenHttpClient("user_client", configureClient: client =>
+        {
+            client.DefaultRequestHeaders.AcceptLanguage.Clear();
+            client.DefaultRequestHeaders.AcceptLanguage.ParseAdd(CultureInfo.DefaultThreadCurrentCulture?.TwoLetterISOLanguageName);
+            client.BaseAddress = new Uri(configuration[ConfigNames.ApiBaseUrl]);
         });
+
+        return services;
     }
 
     private static Task OnMessageReceived(MessageReceivedContext context, IdentityClientSettings identityClientSettings)
@@ -143,32 +171,12 @@ public static class ServiceCollectionExtensions
         return Task.CompletedTask;
     }
 
-    //private static void AddPersistenceContexts(this IServiceCollection services, IConfiguration configuration)
-    //{
-    //    if (configuration.GetValue<bool>("UseInMemoryDatabase"))
-    //    {
-    //        services.AddDbContext<IdentityContext>(options =>
-    //            options.UseInMemoryDatabase("IdentityDb"));
-    //        services.AddDbContext<ApplicationDbContext>(options =>
-    //            options.UseInMemoryDatabase("ApplicationDb"));
-    //    }
-    //    else
-    //    {
-    //        services.AddDbContext<IdentityContext>(options => options.UseSqlServer(configuration.GetConnectionString("IdentityConnection")));
-    //        services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(configuration.GetConnectionString("ApplicationConnection")));
-    //    }
-    //    services.AddIdentity<ApplicationUser, IdentityRole>(options =>
-    //    {
-    //        options.SignIn.RequireConfirmedAccount = true;
-    //        options.Password.RequireNonAlphanumeric = false;
-    //    }).AddEntityFrameworkStores<IdentityContext>().AddDefaultUI().AddDefaultTokenProviders();
-    //}
-
-    public static void AddSharedInfrastructure(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddSharedInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
-        services.Configure<IdentityClientSettings>(configuration.GetSection(nameof(IdentityClientSettings)));
-        services.Configure<MailSettings>(configuration.GetSection(nameof(MailSettings)));
-        services.Configure<CacheSettings>(configuration.GetSection(nameof(CacheSettings)));
-        services.AddTransient<IAuthenticatedUserService, AuthenticatedUserService>();
+        services.Configure<IdentityClientSettings>(configuration.GetSection(nameof(IdentityClientSettings)))
+            .Configure<MailSettings>(configuration.GetSection(nameof(MailSettings)))
+            .Configure<CacheSettings>(configuration.GetSection(nameof(CacheSettings)))
+            .AddTransient<IAuthenticatedUserService, AuthenticatedUserService>();
+        return services;
     }
 }

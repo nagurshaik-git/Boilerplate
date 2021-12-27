@@ -1,6 +1,5 @@
 ﻿@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer localizer
-@using AspNetCoreHero.Boilerplate.Web.Areas.Catalog.Models
-@model BrandViewModel
+@model BrandDto
 <form id="create-form" method="post" asp-controller="Brand" asp-action="OnPostCreateOrEdit" asp-route-id="@Model.Id" onsubmit="return jQueryModalPost(this);" enctype="multipart/form-data">
     <div class="row">
         <div class="col-md-12">
@@ -13,10 +12,10 @@
             </div>
             <div class="form-group row">
                 <label class="col-md-3 col-form-label">@localizer["Tax"]</label>
-                <div class="col-md-9">
+                @*<div class="col-md-9">
                     <input type="text" asp-for="Tax" name="Tax" class="form-control">
                     <span asp-validation-for="Tax" class="text-danger"></span>
-                </div>
+                </div>*@
             </div>
             <div class="form-group row">
                 <label class="col-md-3 col-form-label">Description</label>

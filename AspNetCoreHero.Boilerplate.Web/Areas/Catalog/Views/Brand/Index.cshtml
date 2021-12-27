@@ -2,8 +2,7 @@
     ViewData["Title"] = localizer["Brands"];
     ViewData["Caption"] = localizer["Manage Brands here"];
 }
-@using AspNetCoreHero.Boilerplate.Web.Areas.Catalog.Models
-@model BrandViewModel
+@model BrandDto
 <div class="card">
     <div class="col-sm-12" style="padding:20px">
         @if ((AuthorizationService.AuthorizeAsync(User, Permissions.Brands.Create)).Result.Succeeded)

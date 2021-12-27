@@ -1,6 +1,6 @@
-﻿using AspNetCoreHero.Boilerplate.Application.Constants;
+﻿using AspNetCoreHero.Boilerplate.Application.ApiService;
+using AspNetCoreHero.Boilerplate.Application.Constants;
 using AspNetCoreHero.Boilerplate.Web.Abstractions;
-using AspNetCoreHero.Boilerplate.Web.Areas.Catalog.Models;
 using AspNetCoreHero.Boilerplate.Web.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -13,62 +13,61 @@ using System.Threading.Tasks;
 namespace AspNetCoreHero.Boilerplate.Web.Areas.Catalog.Controllers;
 
 [Area("Catalog")]
-public class ProductController : BaseController<ProductController>
+public class ProductController : BaseController<ProductController, IProductsClient>
 {
     public IActionResult Index()
     {
-        var model = new ProductViewModel();
+        var model = new ProductDto();
         return View(model);
     }
 
     public async Task<IActionResult> LoadAll()
     {
-        //var response = await _mediator.Send(new GetAllProductsCachedQuery());
-        //if (response.Succeeded)
-        //{
-        //    var viewModel = _mapper.Map<List<ProductViewModel>>(response.Data);
-            
-        //}
-        return PartialView("_ViewAll", new List<ProductViewModel>());
+        var response = await _service.SearchAsync(new ProductListFilter() { PageSize = 10 });
+        if (response.Succeeded)
+        {
+            return PartialView("_ViewAll", response.Data);
+        }
+        return PartialView("_ViewAll", new List<ProductDto>());
     }
 
     [Authorize(Policy = Permissions.Users.View)]
     public async Task<JsonResult> OnGetCreateOrEdit(int id = 0)
     {
-        var productViewModel = new ProductViewModel();
+        var ProductDto = new ProductDto();
         //var brandsResponse = await _mediator.Send(new GetAllBrandsCachedQuery());
 
         //if (id == 0)
         //{
-        //    var productViewModel = new ProductViewModel();
+        //    var ProductDto = new ProductDto();
         //    if (brandsResponse.Succeeded)
         //    {
         //        var brandViewModel = _mapper.Map<List<BrandViewModel>>(brandsResponse.Data);
-        //        productViewModel.Brands = new SelectList(brandViewModel, nameof(BrandViewModel.Id), nameof(BrandViewModel.Name), null, null);
+        //        ProductDto.Brands = new SelectList(brandViewModel, nameof(BrandViewModel.Id), nameof(BrandViewModel.Name), null, null);
         //    }
-        //    return new JsonResult(new { isValid = true, html = await _viewRenderer.RenderViewToStringAsync("_CreateOrEdit", productViewModel) });
+        //    return new JsonResult(new { isValid = true, html = await _viewRenderer.RenderViewToStringAsync("_CreateOrEdit", ProductDto) });
         //}
         //else
         //{
         //    var response = await _mediator.Send(new GetProductByIdQuery() { Id = id });
         //    if (response.Succeeded)
         //    {
-        //        var productViewModel = _mapper.Map<ProductViewModel>(response.Data);
+        //        var ProductDto = _mapper.Map<ProductDto>(response.Data);
         //        if (brandsResponse.Succeeded)
         //        {
         //            var brandViewModel = _mapper.Map<List<BrandViewModel>>(brandsResponse.Data);
-        //            productViewModel.Brands = new SelectList(brandViewModel, nameof(BrandViewModel.Id), nameof(BrandViewModel.Name), null, null);
+        //            ProductDto.Brands = new SelectList(brandViewModel, nameof(BrandViewModel.Id), nameof(BrandViewModel.Name), null, null);
         //        }
-        //        return new JsonResult(new { isValid = true, html = await _viewRenderer.RenderViewToStringAsync("_CreateOrEdit", productViewModel) });
+        //        return new JsonResult(new { isValid = true, html = await _viewRenderer.RenderViewToStringAsync("_CreateOrEdit", ProductDto) });
         //    }
         //    return null;
         //}
 
-        return new JsonResult(new { isValid = true, html = await _viewRenderer.RenderViewToStringAsync("_CreateOrEdit", productViewModel) });
+        return new JsonResult(new { isValid = true, html = await _viewRenderer.RenderViewToStringAsync("_CreateOrEdit", ProductDto) });
     }
 
     [HttpPost]
-    public async Task<JsonResult> OnPostCreateOrEdit(int id, ProductViewModel product)
+    public async Task<JsonResult> OnPostCreateOrEdit(int id, ProductDto product)
     {
         if (ModelState.IsValid)
         {
@@ -98,7 +97,7 @@ public class ProductController : BaseController<ProductController>
             //var response = await _mediator.Send(new GetAllProductsCachedQuery());
             //if (response.Succeeded)
             //{
-            //    var viewModel = _mapper.Map<List<ProductViewModel>>(response.Data);
+            //    var viewModel = _mapper.Map<List<ProductDto>>(response.Data);
             //    string html = await _viewRenderer.RenderViewToStringAsync("_ViewAll", viewModel);
             //    return new JsonResult(new { isValid = true, html = html });
             //}
@@ -107,7 +106,7 @@ public class ProductController : BaseController<ProductController>
             //    _notify.Error(response.Message);
             //    return null;
             //}
-            string html = await _viewRenderer.RenderViewToStringAsync("_ViewAll", new List<ProductViewModel>());
+            string html = await _viewRenderer.RenderViewToStringAsync("_ViewAll", new List<ProductDto>());
             return new JsonResult(new { isValid = true, html = html });
         }
         else
@@ -127,7 +126,7 @@ public class ProductController : BaseController<ProductController>
         //    var response = await _mediator.Send(new GetAllProductsCachedQuery());
         //    if (response.Succeeded)
         //    {
-        //        var viewModel = _mapper.Map<List<ProductViewModel>>(response.Data);
+        //        var viewModel = _mapper.Map<List<ProductDto>>(response.Data);
         //        string html = await _viewRenderer.RenderViewToStringAsync("_ViewAll", viewModel);
         //        return new JsonResult(new { isValid = true, html });
         //    }
@@ -143,7 +142,7 @@ public class ProductController : BaseController<ProductController>
         //    return null;
         //}
 
-        string html = await _viewRenderer.RenderViewToStringAsync("_ViewAll", new List<ProductViewModel>());
+        string html = await _viewRenderer.RenderViewToStringAsync("_ViewAll", new List<ProductDto>());
         return new JsonResult(new { isValid = true, html });
     }
 }

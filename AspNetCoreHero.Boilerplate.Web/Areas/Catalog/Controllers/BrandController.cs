@@ -1,5 +1,6 @@
-﻿using AspNetCoreHero.Boilerplate.Web.Abstractions;
-using AspNetCoreHero.Boilerplate.Web.Areas.Catalog.Models;
+﻿using AspNetCoreHero.Boilerplate.Application.ApiService;
+using AspNetCoreHero.Boilerplate.Web.Abstractions;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -7,24 +8,22 @@ using System.Threading.Tasks;
 namespace AspNetCoreHero.Boilerplate.Web.Areas.Catalog.Controllers;
 
 [Area("Catalog")]
-public class BrandController : BaseController<BrandController>
+public class BrandController : BaseController<BrandController, IBrandsClient>
 {
     public IActionResult Index()
     {
-        var model = new BrandViewModel();
+        var model = new BrandDto();
         return View(model);
     }
 
     public async Task<IActionResult> LoadAll()
     {
-        //var response = await _mediator.Send(new GetAllBrandsCachedQuery());
-        //if (response.Succeeded)
-        //{
-        //    var viewModel = _mapper.Map<List<BrandViewModel>>(response.Data);
-        //    return PartialView("_ViewAll", viewModel);
-        //}
-        return PartialView("_ViewAll", new List<BrandViewModel>());
-        //return null;
+        var response = await _service.SearchAsync(new BrandListFilter() { PageSize = 10 });
+        if (response.Succeeded)
+        {
+            return PartialView("_ViewAll", response.Data);
+        }
+        return PartialView("_ViewAll", new List<BrandDto>());
     }
 
     public async Task<JsonResult> OnGetCreateOrEdit(int id = 0)
@@ -33,25 +32,25 @@ public class BrandController : BaseController<BrandController>
 
         //if (id == 0)
         //{
-        //    var brandViewModel = new BrandViewModel();
-        //    return new JsonResult(new { isValid = true, html = await _viewRenderer.RenderViewToStringAsync("_CreateOrEdit", brandViewModel) });
+        //    var BrandDto = new BrandDto();
+        //    return new JsonResult(new { isValid = true, html = await _viewRenderer.RenderViewToStringAsync("_CreateOrEdit", BrandDto) });
         //}
         //else
         //{
         //    var response = await _mediator.Send(new GetBrandByIdQuery() { Id = id });
         //    if (response.Succeeded)
         //    {
-        //        var brandViewModel = _mapper.Map<BrandViewModel>(response.Data);
-        //        return new JsonResult(new { isValid = true, html = await _viewRenderer.RenderViewToStringAsync("_CreateOrEdit", brandViewModel) });
+        //        var BrandDto = _mapper.Map<BrandDto>(response.Data);
+        //        return new JsonResult(new { isValid = true, html = await _viewRenderer.RenderViewToStringAsync("_CreateOrEdit", BrandDto) });
         //    }
         //    return null;
         //}
-        var brandViewModel = new BrandViewModel();
-        return new JsonResult(new { isValid = true, html = await _viewRenderer.RenderViewToStringAsync("_CreateOrEdit", brandViewModel) });
+        var BrandDto = new BrandDto();
+        return new JsonResult(new { isValid = true, html = await _viewRenderer.RenderViewToStringAsync("_CreateOrEdit", BrandDto) });
     }
 
     [HttpPost]
-    public async Task<JsonResult> OnPostCreateOrEdit(int id, BrandViewModel brand)
+    public async Task<JsonResult> OnPostCreateOrEdit(int id, BrandDto brand)
     {
         //if (ModelState.IsValid)
         //{
@@ -75,7 +74,7 @@ public class BrandController : BaseController<BrandController>
         //    var response = await _mediator.Send(new GetAllBrandsCachedQuery());
         //    if (response.Succeeded)
         //    {
-        //        var viewModel = _mapper.Map<List<BrandViewModel>>(response.Data);
+        //        var viewModel = _mapper.Map<List<BrandDto>>(response.Data);
         //        var html = await _viewRenderer.RenderViewToStringAsync("_ViewAll", viewModel);
         //        return new JsonResult(new { isValid = true, html = html });
         //    }
@@ -91,7 +90,7 @@ public class BrandController : BaseController<BrandController>
         //    return new JsonResult(new { isValid = false, html = html });
         //}
 
-        string html = await _viewRenderer.RenderViewToStringAsync("_ViewAll", new List<BrandViewModel>());
+        string html = await _viewRenderer.RenderViewToStringAsync("_ViewAll", new List<BrandDto>());
         return new JsonResult(new { isValid = true, html = html });
     }
 
@@ -105,7 +104,7 @@ public class BrandController : BaseController<BrandController>
         //    var response = await _mediator.Send(new GetAllBrandsCachedQuery());
         //    if (response.Succeeded)
         //    {
-        //        var viewModel = _mapper.Map<List<BrandViewModel>>(response.Data);
+        //        var viewModel = _mapper.Map<List<BrandDto>>(response.Data);
         //        var html = await _viewRenderer.RenderViewToStringAsync("_ViewAll", viewModel);
         //        return new JsonResult(new { isValid = true, html = html });
         //    }
@@ -121,7 +120,7 @@ public class BrandController : BaseController<BrandController>
         //    return null;
         //}
 
-        string html = await _viewRenderer.RenderViewToStringAsync("_ViewAll", new List<BrandViewModel>());
+        string html = await _viewRenderer.RenderViewToStringAsync("_ViewAll", new List<BrandDto>());
         return new JsonResult(new { isValid = true, html });
     }
 }
