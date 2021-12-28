@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AspNetCoreHero.Boilerplate.Application.DTOs.Settings;
+namespace AspNetCoreHero.Boilerplate.Application.Settings;
 
 public class IdentityClientSettings
 {

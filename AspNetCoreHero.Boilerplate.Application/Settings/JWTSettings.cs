@@ -1,4 +1,4 @@
-﻿namespace AspNetCoreHero.Boilerplate.Application.DTOs.Settings;
+﻿namespace AspNetCoreHero.Boilerplate.Application.Settings;
 
 public class JWTSettings
 {

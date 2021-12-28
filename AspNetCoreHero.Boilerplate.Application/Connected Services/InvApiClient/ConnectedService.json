@@ -14,8 +14,8 @@
     "GenerateTypeScriptClient": false,
     "GenerateCSharpController": false,
     "OpenApiToCSharpClientCommand": {
-      "ClientBaseClass": null,
-      "ConfigurationClass": null,
+      "ClientBaseClass": "ApiClient",
+      "ConfigurationClass": "IHttpClientFactory",
       "GenerateClientClasses": true,
       "GenerateClientInterfaces": true,
       "ClientBaseInterface": "IApiService",

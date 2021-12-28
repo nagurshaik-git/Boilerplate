@@ -10,8 +10,8 @@
   },
   "codeGenerators": {
     "openApiToCSharpClient": {
-      "clientBaseClass": null,
-      "configurationClass": null,
+      "clientBaseClass": "ApiClient",
+      "configurationClass": "IHttpClientFactory",
       "generateClientClasses": true,
       "generateClientInterfaces": true,
       "clientBaseInterface": "IApiService",
@@ -55,7 +55,7 @@
       "wrapResponseMethods": [],
       "generateResponseClasses": true,
       "responseClass": "SwaggerResponse",
-      "namespace": "AspNetCoreHero.Boilerplate.Application.ApiService",
+      "namespace": "AspNetCoreHero.Boilerplate.Application.InvApiClient",
       "requiredPropertiesMustBeDefined": true,
       "dateType": "System.DateTimeOffset",
       "jsonConverters": null,

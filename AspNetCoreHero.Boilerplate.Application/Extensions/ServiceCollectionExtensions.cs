@@ -1,6 +1,6 @@
 ﻿using AspNetCoreHero.Boilerplate.Application.ApiService;
 using AspNetCoreHero.Boilerplate.Application.Constants;
-using AspNetCoreHero.Boilerplate.Application.DTOs.Settings;
+using AspNetCoreHero.Boilerplate.Application.Settings;
 using FluentValidation;
 using IdentityModel.Client;
 using Microsoft.Extensions.Configuration;

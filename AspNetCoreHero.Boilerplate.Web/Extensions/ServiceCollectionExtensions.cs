@@ -2,7 +2,7 @@
 using AspNetCoreHero.Boilerplate.Application.ApiService;
 using AspNetCoreHero.Boilerplate.Application.Common;
 using AspNetCoreHero.Boilerplate.Application.Constants;
-using AspNetCoreHero.Boilerplate.Application.DTOs.Settings;
+using AspNetCoreHero.Boilerplate.Application.Settings;
 using AspNetCoreHero.Boilerplate.Application.Extensions;
 using AspNetCoreHero.Boilerplate.Application.Interfaces.Shared;
 using AspNetCoreHero.Boilerplate.Web.Services;
@@ -20,6 +20,8 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Authorization;
 
 namespace AspNetCoreHero.Boilerplate.Web.Extensions;
 
@@ -149,6 +151,13 @@ public static class ServiceCollectionExtensions
             client.DefaultRequestHeaders.AcceptLanguage.ParseAdd(CultureInfo.DefaultThreadCurrentCulture?.TwoLetterISOLanguageName);
             client.BaseAddress = new Uri(configuration[ConfigNames.ApiBaseUrl]);
         });
+
+        //services.AddMvc(o =>
+        //{
+        //    //Add Authentication to all Controllers by default.
+        //    var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
+        //    o.Filters.Add(new AuthorizeFilter(policy));
+        //});
 
         return services;
     }

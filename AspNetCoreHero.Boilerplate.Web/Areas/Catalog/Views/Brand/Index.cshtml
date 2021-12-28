@@ -5,12 +5,12 @@
 @model BrandDto
 <div class="card">
     <div class="col-sm-12" style="padding:20px">
-        @if ((AuthorizationService.AuthorizeAsync(User, Permissions.Brands.Create)).Result.Succeeded)
-        {
+        @*@if ((AuthorizationService.AuthorizeAsync(User, Permissions.Brands.Create)).Result.Succeeded)
+        {*@
             <a onclick="jQueryModalGet('/catalog/brand/OnGetCreateOrEdit','Create Brand')" class="btn bg-success">
                 <i class="fa fa-plus-square"></i> Create
             </a>
-        }
+        @*}*@
 
         <a id="reload" class="btn btn-primary text-white">
             <i class="fa fas fa-bolt"></i>

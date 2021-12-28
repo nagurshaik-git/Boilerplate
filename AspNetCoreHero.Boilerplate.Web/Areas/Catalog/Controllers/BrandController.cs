@@ -2,6 +2,7 @@
 using AspNetCoreHero.Boilerplate.Web.Abstractions;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -26,72 +27,66 @@ public class BrandController : BaseController<BrandController, IBrandsClient>
         return PartialView("_ViewAll", new List<BrandDto>());
     }
 
-    public async Task<JsonResult> OnGetCreateOrEdit(int id = 0)
+    public async Task<JsonResult> OnGetCreateOrEdit(Guid? id = null)
     {
-        //var brandsResponse = await _mediator.Send(new GetAllBrandsCachedQuery());
-
-        //if (id == 0)
-        //{
-        //    var BrandDto = new BrandDto();
-        //    return new JsonResult(new { isValid = true, html = await _viewRenderer.RenderViewToStringAsync("_CreateOrEdit", BrandDto) });
-        //}
-        //else
-        //{
-        //    var response = await _mediator.Send(new GetBrandByIdQuery() { Id = id });
-        //    if (response.Succeeded)
-        //    {
-        //        var BrandDto = _mapper.Map<BrandDto>(response.Data);
-        //        return new JsonResult(new { isValid = true, html = await _viewRenderer.RenderViewToStringAsync("_CreateOrEdit", BrandDto) });
-        //    }
-        //    return null;
-        //}
-        var BrandDto = new BrandDto();
-        return new JsonResult(new { isValid = true, html = await _viewRenderer.RenderViewToStringAsync("_CreateOrEdit", BrandDto) });
+        if (id == null)
+        {
+            var brand = new BrandDto();
+            return new JsonResult(new { isValid = true, html = await _viewRenderer.RenderViewToStringAsync("_CreateOrEdit", brand) });
+        }
+        else
+        {
+            var response = await _service.GetAsync(id ?? Guid.Empty);
+            if (response.Succeeded)
+            {
+                return new JsonResult(new { isValid = true, html = await _viewRenderer.RenderViewToStringAsync("_CreateOrEdit", response.Data) });
+            }
+            return null;
+        }
     }
 
     [HttpPost]
-    public async Task<JsonResult> OnPostCreateOrEdit(int id, BrandDto brand)
+    public async Task<JsonResult> OnPostCreateOrEdit(Guid id, CreateBrandRequest createBrandRequest)
     {
-        //if (ModelState.IsValid)
-        //{
-        //    if (id == 0)
-        //    {
-        //        var createBrandCommand = _mapper.Map<CreateBrandCommand>(brand);
-        //        var result = await _mediator.Send(createBrandCommand);
-        //        if (result.Succeeded)
-        //        {
-        //            id = result.Data;
-        //            _notify.Success($"Brand with ID {result.Data} Created.");
-        //        }
-        //        else _notify.Error(result.Message);
-        //    }
-        //    else
-        //    {
-        //        var updateBrandCommand = _mapper.Map<UpdateBrandCommand>(brand);
-        //        var result = await _mediator.Send(updateBrandCommand);
-        //        if (result.Succeeded) _notify.Information($"Brand with ID {result.Data} Updated.");
-        //    }
-        //    var response = await _mediator.Send(new GetAllBrandsCachedQuery());
-        //    if (response.Succeeded)
-        //    {
-        //        var viewModel = _mapper.Map<List<BrandDto>>(response.Data);
-        //        var html = await _viewRenderer.RenderViewToStringAsync("_ViewAll", viewModel);
-        //        return new JsonResult(new { isValid = true, html = html });
-        //    }
-        //    else
-        //    {
-        //        _notify.Error(response.Message);
-        //        return null;
-        //    }
-        //}
-        //else
-        //{
-        //    var html = await _viewRenderer.RenderViewToStringAsync("_CreateOrEdit", brand);
-        //    return new JsonResult(new { isValid = false, html = html });
-        //}
+        if (ModelState.IsValid)
+        {
+            if (id == Guid.Empty)
+            {
+                var result = await _service.CreateAsync(createBrandRequest);
+                if (result.Succeeded)
+                {
+                    id = result.Data;
+                    _notify.Success($"Brand with ID {result.Data} Created.");
+                }
+                else _notify.Error(string.Join(",", result.Messages));
+            }
+            else
+            {
+                var result = await _service.UpdateAsync(id, new UpdateBrandRequest()
+                {
+                    Description = createBrandRequest.Description,
+                    Name = createBrandRequest.Name,
+                });
+                if (result.Succeeded) _notify.Information($"Brand with ID {result.Data} Updated.");
+            }
 
-        string html = await _viewRenderer.RenderViewToStringAsync("_ViewAll", new List<BrandDto>());
-        return new JsonResult(new { isValid = true, html = html });
+            var response = await _service.SearchAsync(new BrandListFilter() { PageSize = 10 });
+            if (response.Succeeded)
+            {
+                string html = await _viewRenderer.RenderViewToStringAsync("_ViewAll", response.Data);
+                return new JsonResult(new { isValid = true, html = html });
+            }
+            else
+            {
+                _notify.Error(string.Join(",", response.Messages));
+                return null;
+            }
+        }
+        else
+        {
+            string html = await _viewRenderer.RenderViewToStringAsync("_CreateOrEdit", createBrandRequest);
+            return new JsonResult(new { isValid = false, html = html });
+        }
     }
 
     [HttpPost]
